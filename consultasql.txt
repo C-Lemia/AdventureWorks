@@ -1,0 +1,22 @@
+SELECT 
+    soh.OrderDate AS DataPedido,                  
+    soh.TotalDue AS ValorTotal,                   
+    addr.StateProvinceID AS Regiao,               
+    prod.Name AS NomeProduto,                     
+    cust.FirstName + ' ' + cust.LastName AS Cliente,  
+    soh.SalesOrderNumber AS NumeroPedido          
+FROM 
+    Sales.SalesOrderHeader AS soh                 
+JOIN 
+    Sales.SalesOrderDetail AS sod ON soh.SalesOrderID = sod.SalesOrderID  
+JOIN 
+    Production.Product AS prod ON sod.ProductID = prod.ProductID          
+JOIN 
+    Person.Address AS addr ON soh.ShipToAddressID = addr.AddressID        
+JOIN 
+    Sales.Customer AS cust ON soh.CustomerID = cust.CustomerID            
+WHERE 
+    soh.OrderDate BETWEEN '2023-01-01' AND '2023-12-31'                   
+    AND soh.TotalDue > 0                                                  
+ORDER BY 
+    soh.OrderDate DESC
