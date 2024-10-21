@@ -5,41 +5,37 @@ import plotly.express as px
 # Caminho da imagem
 image_path = "C:/Users/camil/hexagon/hexagon.png"
 
-# Usar colunas para organizar o layout (logo à direita)
+# Usar colunas para organizar o layout --------------------------
 col1, col2 = st.columns([3, 1])
 
 with col1:
     st.title("Análise de Vendas - AdventureWorks2022")
 
-# Aumentar o logo usando st.image com o parâmetro de largura
+# Aumentar o logo ------------------------------
 with col2:
-    st.image(image_path, use_column_width=False, width=200)  # Aumenta o tamanho ajustando a largura
+    st.image(image_path, use_column_width=False, width=200)  
 
-# Importar o arquivo bd.py
-from bd import carregar_dados  # Assumindo que bd.py está no mesmo diretório
+# Importar o arquivo bd.py-----------------------------
+from bd import carregar_dados
 
-# Carregar os dados do banco de dados
+# Carregar os dados do banco de dados-----------------------
 df = carregar_dados()
 
-# Certifique-se de que 'OrderDate' está em formato de data
 df['OrderDate'] = pd.to_datetime(df['OrderDate'])
 
-# Criar colunas de ano e mês a partir da data do pedido
 df['Ano'] = df['OrderDate'].dt.year
 df['Mes'] = df['OrderDate'].dt.month
 
-# 1. Vendas totais por região
 vendas_por_regiao = df.groupby('StateProvinceID')['TotalDue'].sum().reset_index()
 vendas_por_regiao.columns = ['Regiao', 'VendasTotais']
 
-# 2. Vendas totais por produto
 vendas_por_produto = df.groupby('ProductName')['TotalDue'].sum().reset_index()
 vendas_por_produto.columns = ['Produto', 'VendasTotais']
 
-# Filtrar os 5 produtos mais vendidos
+# Filtrar os 5 produtos mais vendidos------------
 top5_produtos = vendas_por_produto.nlargest(5, 'VendasTotais')
 
-# Filtrar as 5 regiões com mais vendas
+# Filtrar as 5 regiões com mais vendas----------------
 top5_regioes = vendas_por_regiao.nlargest(5, 'VendasTotais')
 
 # Converta 'Regiao' para string para garantir que o eixo x seja categórico
