@@ -9,7 +9,7 @@ image_path = "hexagon.png"
 col1, col2 = st.columns([3, 1])
 
 with col1:
-    #####Importar o arquivo bd.py
+    ##### Importar o arquivo bd.py
     from bd import carregar_dados  
 
     ##### Carregar os dados do banco de dados
@@ -45,7 +45,7 @@ with col1:
         (df['TotalDue'] <= valor_selecionado[1])
     ]
 
-    #####Gráfico de Barras: Vendas por Região
+    ##### Gráfico de Barras: Vendas por Região #####
     vendas_por_regiao = df_filtrado.groupby('StateProvinceID')['TotalDue'].sum().reset_index()
     vendas_por_regiao.columns = ['Regiao', 'VendasTotais']
 
@@ -60,7 +60,18 @@ with col1:
 
     st.plotly_chart(fig_barras)
 
-    #####Gráfico de Linhas: Vendas ao Longo do Tempo (Ano e Mês, após filtro)
+    ##### Produto mais vendido por região #####
+    # Agrupar por região e produto para somar o total de vendas por produto em cada região
+    vendas_produto_regiao = df_filtrado.groupby(['StateProvinceID', 'ProductName'])['TotalDue'].sum().reset_index()
+
+    # Encontrar o produto mais vendido em cada região
+    idx = vendas_produto_regiao.groupby('StateProvinceID')['TotalDue'].idxmax()
+    produto_mais_vendido_regiao = vendas_produto_regiao.loc[idx].reset_index(drop=True)
+
+    st.subheader("Produto mais vendido por Região")
+    st.dataframe(produto_mais_vendido_regiao)
+
+    ##### Gráfico de Linhas: Vendas ao Longo do Tempo (Ano e Mês, após filtro) #####
     vendas_por_tempo = df_filtrado.groupby(['Ano', 'Mes'])['TotalDue'].sum().reset_index()
 
     # Ajuste para criar uma data válida 
